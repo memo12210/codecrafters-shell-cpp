@@ -11,10 +11,10 @@ enum commands
 
 commands string_to_command(std::string str)
 {
-  if(str == "echo") return echo;
-  if(str == "cd") return cd;
-  if(str == "exit 0") return quit;
-
+  if(str.find("echo") != std::string::npos) return echo;
+  if(str.find("cd") != std::string::npos) return cd;
+  if(str.find("exit") != std::string::npos) return quit;
+  
   return invalid;
 }
 
@@ -32,6 +32,9 @@ int main()
     
     switch(string_to_command(input))
     {
+    case echo:
+      std::cout << input.substr(5) << '\n';
+      break;
     case quit:
       return 0;
     default:
