@@ -65,7 +65,7 @@ int main(int argc,char** argv)
       {
         // shell builtin command
         std::string cmd_path = directories[0] + "/" + input.substr(5);
-        if(std::errc::is_a_directory(cmd_path))
+        if(std::filesystem::is_directory(cmd_path))
           std::cout << input.substr(5) << " is " << cmd_path << '\n';
         else
           std::cout << input.substr(5) << " not found" << '\n';
@@ -73,7 +73,7 @@ int main(int argc,char** argv)
       else
       {
         std::string cmd_path = directories[1] + "/" + input.substr(5);
-        if(std::errc::is_a_directory(cmd_path))
+        if(std::filesystem::is_directory(cmd_path))
           std::cout << input.substr(5) << " is " << cmd_path << '\n';
         else
           std::cout << input.substr(5) << ": command not found" << '\n';
