@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <cstdlib>
+#include <vector>
 
 enum commands
 {
@@ -20,13 +22,34 @@ commands string_to_command(std::string str)
   return invalid;
 }
 
-int main()
+std::vector<std::string> get_path_dirs()
+{
+  std::vector<std::string> dirs;
+  char* path = getenv("PATH");
+  if(path != nullptr)
+  {
+    std::string pathStr(path);
+    size_t start = 0,end;
+    while((end = pathStr.find(':',start) != std::string::npos))
+    {
+      dirs.push_back(pathStr.substr(start,end - start));
+      start = end + 1;
+    }
+    dirs.push_back(pathStr.substr(start));
+  }
+  return dirs;
+}
+
+int main(int argc,char** argv)
 {
   // Flush after every std::cout / std:cerr
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   
   std::string input = " ";
+
+  std::vector<std::string> directories = get_path_dirs();
+  
   while(!input.empty())
   {
     std::cout << "$ ";
@@ -39,9 +62,22 @@ int main()
       break;
     case type:
       if(string_to_command(input.substr(5)) != invalid)
-        std::cout << input.substr(5) << " is a shell builtin" << '\n';
+      {
+        // shell builtin command
+        std::string cmd_path = directories[0] + "/" + input.substr(5);
+        if(std::errc::is_a_directory(cmd_path))
+          std::cout << input.substr(5) << " is " << cmd_path << '\n';
+        else
+          std::cout << input.substr(5) << " not found" << '\n';
+      }
       else
-        std::cout << input.substr(5) << " not found" << '\n';
+      {
+        std::string cmd_path = directories[1] + "/" + input.substr(5);
+        if(std::errc::is_a_directory(cmd_path))
+          std::cout << input.substr(5) << " is " << cmd_path << '\n';
+        else
+          std::cout << input.substr(5) << ": command not found" << '\n';
+      }
       break;
     case quit:
       return 0;
@@ -50,6 +86,6 @@ int main()
       break;
     }
   }
-
+  
   return 0;
 }
