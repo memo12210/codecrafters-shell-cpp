@@ -5,6 +5,7 @@ enum commands
 {
   echo,
   cd,
+  quit,
   invalid
 };
 
@@ -12,6 +13,7 @@ commands string_to_command(std::string str)
 {
   if(str == "echo") return echo;
   if(str == "cd") return cd;
+  if(str == "exit 0") return quit;
 
   return invalid;
 }
@@ -27,11 +29,15 @@ int main()
   {
     std::cout << "$ ";
     std::getline(std::cin, input);
-
-    if(input.empty()) break;
     
-    if(string_to_command(input) == invalid)
-      std::cout << input << ": command not found" << '\n'; 
+    switch(string_to_command(input))
+    {
+    case quit:
+      return 0;
+    default:
+      std::cout << input << ": command not found" << '\n';
+      break;
+    }
   }
 
   return 0;
