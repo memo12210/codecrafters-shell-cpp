@@ -22,11 +22,17 @@ int main()
   std::cout << std::unitbuf;
   std::cerr << std::unitbuf;
   
-  std::cout << "$ ";
-  std::string input;
-  std::getline(std::cin, input);
+  std::string input = " ";
+  while(!input.empty())
+  {
+    std::cout << "$ ";
+    std::getline(std::cin, input);
 
-  if(string_to_command(input) == invalid)
-    std::cout << input << ": command not found" << '\n';
-  
+    if(input.empty()) break;
+    
+    if(string_to_command(input) == invalid)
+      std::cout << input << ": command not found" << '\n'; 
+  }
+
+  return 0;
 }
