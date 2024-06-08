@@ -3,6 +3,7 @@
 
 enum commands
 {
+  type,
   echo,
   cd,
   quit,
@@ -11,6 +12,7 @@ enum commands
 
 commands string_to_command(std::string str)
 {
+  if(str.find("type")!= std::string::npos) return type;
   if(str.find("echo") != std::string::npos) return echo;
   if(str.find("cd") != std::string::npos) return cd;
   if(str.find("exit") != std::string::npos) return quit;
@@ -34,6 +36,12 @@ int main()
     {
     case echo:
       std::cout << input.substr(5) << '\n';
+      break;
+    case type:
+      if(string_to_command(input.substr(5)) != invalid)
+        std::cout << input.substr(5) << " is a shell builtin" << '\n';
+      else
+        std::cout << input.substr(5) << " not found" << '\n';
       break;
     case quit:
       return 0;
