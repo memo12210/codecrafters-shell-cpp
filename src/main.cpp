@@ -76,7 +76,7 @@ int main(int argc,char** argv)
       std::filesystem::path full_path = dir / cmd_path;
       if(std::filesystem::exists(full_path))
       {
-        std::cout << input.substr(5) << " is " << full_path << '\n';
+        std::cout << input.substr(5) << " is " << full_path.string() << '\n';
         isDir = true;
         break;
       }
