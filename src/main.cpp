@@ -69,22 +69,23 @@ int main(int argc,char** argv)
       std::cout << input.substr(5) << '\n';
       break;
     case type:
-      cmd_path = "/" + input.substr(5);
-      isDir = false;
-      for(std::filesystem::path p : dirs)
+    cmd_path = input.substr(5);
+    isDir = false;
+    for(const auto& dir : dirs)
+    {
+      std::filesystem::path full_path = dir / cmd_path;
+      if(std::filesystem::exists(full_path))
       {
-        if(std::filesystem::is_directory(p / cmd_path))
-        {
-          std::cout << input.substr(5) << " is " << p / cmd_path << '\n';
-          isDir = true;
-          break;
-        }
+        std::cout << input.substr(5) << " is " << full_path << '\n';
+        isDir = true;
+        break;
       }
-      if(!isDir)
-      {
-        std::cout << input.substr(5) << ": command not found" << '\n';
-      }
-      break;
+    }
+    if(!isDir)
+    {
+      std::cout << input.substr(5) << ": command not found" << '\n';
+    }
+    break;
     case quit:
       return 0;
     default:
