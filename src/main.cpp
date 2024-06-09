@@ -69,21 +69,28 @@ int main(int argc,char** argv)
       std::cout << input.substr(5) << '\n';
       break;
     case type:
-    cmd_path = input.substr(5);
-    isDir = false;
-    for(const auto& dir : dirs)
+    if(string_to_command(input.substr(5)) != invalid)
     {
-      std::filesystem::path full_path = dir / cmd_path;
-      if(std::filesystem::exists(full_path))
-      {
-        std::cout << input.substr(5) << " is " << full_path.string() << '\n';
-        isDir = true;
-        break;
-      }
+      std::cout << input.substr(5) << " is a shell builtin" << '\n';
     }
-    if(!isDir)
+    else 
     {
-      std::cout << input.substr(5) << ": not found" << '\n';
+      cmd_path = input.substr(5);
+      isDir = false;
+      for(const auto& dir : dirs)
+      {
+        std::filesystem::path full_path = dir / cmd_path;
+        if(std::filesystem::exists(full_path))
+        {
+          std::cout << input.substr(5) << " is " << full_path.string() << '\n';
+          isDir = true;
+          break;
+        }
+      }
+      if(!isDir)
+      {
+        std::cout << input.substr(5) << ": not found" << '\n';
+      }
     }
     break;
     case quit:
