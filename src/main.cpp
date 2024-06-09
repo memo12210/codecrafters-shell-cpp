@@ -83,7 +83,7 @@ int main(int argc,char** argv)
     }
     if(!isDir)
     {
-      std::cout << input.substr(5) << ": command not found" << '\n';
+      std::cout << input.substr(5) << ": not found" << '\n';
     }
     break;
     case quit:
