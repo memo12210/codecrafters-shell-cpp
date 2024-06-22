@@ -60,8 +60,9 @@ int main(int argc,char** argv)
     std::cout << "$ ";
     std::getline(std::cin, input);
 
-    std::filesystem::path cmd_path;
+    std::filesystem::path cmd_path,program_path;
     bool isDir = false;
+    bool isExe = false;
     
     switch(string_to_command(input))
     {
@@ -96,7 +97,23 @@ int main(int argc,char** argv)
     case quit:
       return 0;
     default:
-      std::cout << input << ": command not found" << '\n';
+      // may be external program (ex: $ program_1234 alice)
+      program_path = input.substr(5);
+      isExe = false;
+      for(const auto& dir : dirs)
+      {
+        std::filesystem::path full_path = dir / program_path;
+        if(std::filesystem::exists(full_path))
+        {
+          isExe = true;
+          system(full_path.string().c_str());
+          break;
+        }
+      }
+      if(!isExe)
+      {
+        std::cout << input << ": command not found" << '\n';
+      }
       break;
     }
   }
