@@ -117,13 +117,13 @@ int main(int argc,char** argv)
         if(std::filesystem::exists(full_path))
         {
           isExe = true;
-          const char *args[] = { vec[1].c_str(), nullptr };
-          if(execv(full_path.string().c_str(),const_cast<char *const *>(args)) == -1)
+          const char *arg[] = { vec[1].c_str(), nullptr };
+          if(execv(full_path.string().c_str(),const_cast<char *const *>(arg)) == -1)
           {
             std::cerr << "Error executing program! " << '\n';
             return 1;
           }
-          
+
           break;
         }
       }
