@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sys/wait.h>
 #include <unistd.h>
 #include <string>
 #include <cstdlib>
@@ -117,20 +118,37 @@ int main(int argc,char** argv)
         if(std::filesystem::exists(full_path))
         {
           isExe = true;
-          std::vector<const char*> args;
-          for(const auto& arg : vec)
+          pid_t pid = fork();
+          if(pid == -1)
           {
-            args.push_back(arg.c_str());
-          }
-
-          args.push_back(nullptr);
-
-          if(execv(full_path.c_str(),const_cast<char* const*>(args.data())) == -1)
-          {
-            std::cerr << "Error executing program!" << '\n';
+            std::cerr << "Error forking process!" << '\n';
             return 1;
           }
 
+          if(pid == 0)
+          {
+            std::vector<const char*> args;
+            for(const auto& arg : vec)
+            {
+              args.push_back(arg.c_str());
+            }
+
+            args.push_back(nullptr);
+
+            if(execv(full_path.c_str(),const_cast<char* const*>(args.data())) == -1)
+            {
+              std::cerr << "Error executing program!" << '\n';
+              return 1;
+            }
+          }
+
+          else
+          {
+            // parent process
+            int status;
+            waitpid(pid,&status,0);
+          }
+          
           break;
         }
       }
