@@ -98,14 +98,14 @@ int main(int argc,char** argv)
     case quit:
       return 0;
     default:
-      // may be external program (ex: $ program_1234 alice)
+      // may be external program with args
       std::stringstream ss(input);
       std::string temp;
       std::vector<std::string> vec;
 
       while(std::getline(ss,temp,' '))
       {
-        vec.push_back(temp); // vec[0] is program name, vec[1] is program argument
+        vec.push_back(temp); // vec[0] is program name, vec[1] is program args.
       }
 
       program_path = vec[0];
@@ -117,16 +117,24 @@ int main(int argc,char** argv)
         if(std::filesystem::exists(full_path))
         {
           isExe = true;
-          const char *arg[] = { vec[1].c_str(), nullptr };
-          if(execv(full_path.string().c_str(),const_cast<char *const *>(arg)) == -1)
+          std::vector<const char*> args;
+          for(const auto& arg : vec)
           {
-            std::cerr << "Error executing program! " << '\n';
+            args.push_back(arg.c_str());
+          }
+
+          args.push_back(nullptr);
+
+          if(execv(full_path.c_str(),const_cast<char* const*>(args.data())) == -1)
+          {
+            std::cerr << "Error executing program!" << '\n';
             return 1;
           }
 
           break;
         }
       }
+
       if(!isExe)
       {
         std::cout << input << ": command not found" << '\n';
