@@ -1,4 +1,5 @@
 #include <iostream>
+#include <unistd.h>
 #include <string>
 #include <cstdlib>
 #include <vector>
@@ -98,7 +99,17 @@ int main(int argc,char** argv)
       return 0;
     default:
       // may be external program (ex: $ program_1234 alice)
-      program_path = input.substr(5);
+      std::stringstream ss(input);
+      std::string temp;
+      std::vector<std::string> vec;
+
+      while(std::getline(ss,temp,' '))
+      {
+        vec.push_back(temp); // vec[0] is program name, vec[1] is program argument
+      }
+
+      program_path = vec[0];
+
       isExe = false;
       for(const auto& dir : dirs)
       {
@@ -106,7 +117,13 @@ int main(int argc,char** argv)
         if(std::filesystem::exists(full_path))
         {
           isExe = true;
-          system(full_path.string().c_str());
+          const char *args[] = { vec[1].c_str(), nullptr };
+          if(execv(full_path.string().c_str(),const_cast<char *const *>(args)) == -1)
+          {
+            std::cerr << "Error executing program! " << '\n';
+            return 1;
+          }
+          
           break;
         }
       }
